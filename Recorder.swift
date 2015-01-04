@@ -15,7 +15,7 @@ class Recorder: NSObject {
     var view : UIView?
     var outputPath : NSString?
     var referenceDate : NSDate?
-    var outputJPG = true
+    var outputJPG = false
     
     func start() {
         
