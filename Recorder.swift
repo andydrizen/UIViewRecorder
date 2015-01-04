@@ -15,7 +15,7 @@ class Recorder: NSObject {
     var view : UIView?
     var outputPath : NSString?
     var referenceDate : NSDate?
-    var outputJPG = false
+    var outputJPG = true
     
     func start() {
         
@@ -35,7 +35,7 @@ class Recorder: NSObject {
         
         let seconds = referenceDate?.timeIntervalSinceNow
         if (seconds != nil) {
-            println("Recorded \(imageCounter) images for a duration of \(-1 * seconds!) seconds, stored in: \(applicationDocumentsDirectory)")
+            println("Recorded: \(imageCounter) frames\nDuration: \(-1 * seconds!) seconds\nStored in: \(outputPathString())")
         }
     }
     
@@ -51,24 +51,36 @@ class Recorder: NSObject {
         }
     }
     
+    func outputPathString() -> String {
+        if (outputPath != nil) {
+            return outputPath!
+        }
+        else {
+            return applicationDocumentsDirectory.absoluteString!
+        }
+    }
+    
     func createImageFromView(captureView : UIView) {
         UIGraphicsBeginImageContextWithOptions(captureView.bounds.size, false, 0)
         captureView.drawViewHierarchyInRect(captureView.bounds, afterScreenUpdates: false)
         
         let image = UIGraphicsGetImageFromCurrentImageContext();
-        let data = (outputJPG) ? UIImageJPEGRepresentation(image, 0) : UIImagePNGRepresentation(image)
         
-        imageCounter = imageCounter + 1
-        var path : NSString?
-        
-        if (outputPath != nil) {
-            path = outputPath
+        var fileExtension = "png"
+        var data : NSData?
+        if (outputJPG) {
+            data = UIImageJPEGRepresentation(image, 1)
+            fileExtension = "jpg"
         }
         else {
-            path = applicationDocumentsDirectory.absoluteString!.stringByAppendingPathComponent("/image\(imageCounter).png")
+            data = UIImagePNGRepresentation(image)
         }
         
-        data.writeToURL(NSURL(string: path!)!, atomically: false)
+        imageCounter = imageCounter + 1
+        var path = outputPathString()
+        path = path.stringByAppendingPathComponent("/image\(imageCounter).\(fileExtension)")
+        
+        data!.writeToURL(NSURL(string: path)!, atomically: false)
         
         UIGraphicsEndImageContext();
     }
