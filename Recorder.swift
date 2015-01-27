@@ -8,16 +8,16 @@
 
 import UIKit
 
-class Recorder: NSObject {
+public class Recorder: NSObject {
     var displayLink : CADisplayLink?
     
     var imageCounter = 0
-    var view : UIView?
+    public var view : UIView?
     var outputPath : NSString?
     var referenceDate : NSDate?
     var outputJPG = false
     
-    func start() {
+    public func start() {
         
         if (view == nil) {
             NSException(name: "No view set", reason: "You must set a view before calling start.", userInfo: nil).raise()
@@ -30,7 +30,7 @@ class Recorder: NSObject {
         }
     }
     
-    func stop() {
+    public func stop() {
         displayLink?.invalidate()
         
         let seconds = referenceDate?.timeIntervalSinceNow
