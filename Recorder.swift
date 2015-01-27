@@ -15,7 +15,8 @@ public class Recorder: NSObject {
     public var view : UIView?
     var outputPath : NSString?
     var referenceDate : NSDate?
-    var outputJPG = false
+    public var name = "image"
+    public var outputJPG = false
     
     public func start() {
         
@@ -78,7 +79,7 @@ public class Recorder: NSObject {
         
         imageCounter = imageCounter + 1
         var path = outputPathString()
-        path = path.stringByAppendingPathComponent("/image\(imageCounter).\(fileExtension)")
+        path = path.stringByAppendingPathComponent("/\(name)\(imageCounter).\(fileExtension)")
         
         data!.writeToURL(NSURL(string: path)!, atomically: false)
         
