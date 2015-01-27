@@ -77,9 +77,10 @@ public class Recorder: NSObject {
             data = UIImagePNGRepresentation(image)
         }
         
-        imageCounter = imageCounter + 1
         var path = outputPathString()
-        path = path.stringByAppendingPathComponent("/\(name)\(imageCounter).\(fileExtension)")
+        path = path.stringByAppendingPathComponent("/\(name)-\(imageCounter).\(fileExtension)")
+        
+        imageCounter = imageCounter + 1
         
         data!.writeToURL(NSURL(string: path)!, atomically: false)
         
