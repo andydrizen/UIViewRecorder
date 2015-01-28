@@ -8,16 +8,17 @@
 
 import UIKit
 
-class Recorder: NSObject {
+public class Recorder: NSObject {
     var displayLink : CADisplayLink?
     
     var imageCounter = 0
-    var view : UIView?
+    public var view : UIView?
     var outputPath : NSString?
     var referenceDate : NSDate?
-    var outputJPG = false
+    public var name = "image"
+    public var outputJPG = false
     
-    func start() {
+    public func start() {
         
         if (view == nil) {
             NSException(name: "No view set", reason: "You must set a view before calling start.", userInfo: nil).raise()
@@ -30,7 +31,7 @@ class Recorder: NSObject {
         }
     }
     
-    func stop() {
+    public func stop() {
         displayLink?.invalidate()
         
         let seconds = referenceDate?.timeIntervalSinceNow
@@ -76,9 +77,10 @@ class Recorder: NSObject {
             data = UIImagePNGRepresentation(image)
         }
         
-        imageCounter = imageCounter + 1
         var path = outputPathString()
-        path = path.stringByAppendingPathComponent("/image\(imageCounter).\(fileExtension)")
+        path = path.stringByAppendingPathComponent("/\(name)-\(imageCounter).\(fileExtension)")
+        
+        imageCounter = imageCounter + 1
         
         data!.writeToURL(NSURL(string: path)!, atomically: false)
         
