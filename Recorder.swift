@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class Recorder: NSObject {
+@objc public class Recorder: NSObject {
     var displayLink : CADisplayLink?
     
     var imageCounter = 0
