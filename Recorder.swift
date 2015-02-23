@@ -82,7 +82,9 @@ public class Recorder: NSObject {
         
         imageCounter = imageCounter + 1
         
-        data!.writeToURL(NSURL(string: path)!, atomically: false)
+        if let imageRaw = data {
+            imageRaw.writeToURL(NSURL(string: path)!, atomically: false)
+        }
         
         UIGraphicsEndImageContext();
     }
