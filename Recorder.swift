@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class Recorder: NSObject {
+@objc public class Recorder: NSObject {
     var displayLink : CADisplayLink?
     
     var imageCounter = 0
@@ -82,7 +82,9 @@ public class Recorder: NSObject {
         
         imageCounter = imageCounter + 1
         
-        data!.writeToURL(NSURL(string: path)!, atomically: false)
+        if let imageRaw = data {
+            imageRaw.writeToURL(NSURL(string: path)!, atomically: false)
+        }
         
         UIGraphicsEndImageContext();
     }
