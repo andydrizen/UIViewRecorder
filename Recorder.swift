@@ -21,11 +21,11 @@ import UIKit
     public func start() {
         
         if (view == nil) {
-            NSException(name: "No view set", reason: "You must set a view before calling start.", userInfo: nil).raise()
+            NSException(name: NSExceptionName(rawValue: "No view set"), reason: "You must set a view before calling start.", userInfo: nil).raise()
         }
         else {
-            displayLink = CADisplayLink(target: self, selector: "handleDisplayLink:")
-            displayLink!.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+            displayLink = CADisplayLink(target: self, selector: #selector(self.handleDisplayLink(displayLink:)))
+            displayLink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
             
             referenceDate = NSDate()
         }
@@ -36,54 +36,54 @@ import UIKit
         
         let seconds = referenceDate?.timeIntervalSinceNow
         if (seconds != nil) {
-            println("Recorded: \(imageCounter) frames\nDuration: \(-1 * seconds!) seconds\nStored in: \(outputPathString())")
+            print("Recorded: \(imageCounter) frames\nDuration: \(-1 * seconds!) seconds\nStored in: \(outputPathString())")
         }
     }
     
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "uk.co.andydrizen.test" in the application's documents Application Support directory.
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls[urls.count - 1] as NSURL
         }()
     
-    func handleDisplayLink(displayLink : CADisplayLink) {
+    @objc func handleDisplayLink(displayLink : CADisplayLink) {
         if (view != nil) {
-            createImageFromView(view!)
+            createImageFromView(captureView: view!)
         }
     }
     
-    func outputPathString() -> String {
+    func outputPathString() -> NSString {
         if (outputPath != nil) {
-            return outputPath!
+            return outputPath! as NSString
         }
         else {
-            return applicationDocumentsDirectory.absoluteString!
+            return applicationDocumentsDirectory.absoluteString! as NSString
         }
     }
     
     func createImageFromView(captureView : UIView) {
         UIGraphicsBeginImageContextWithOptions(captureView.bounds.size, false, 0)
-        captureView.drawViewHierarchyInRect(captureView.bounds, afterScreenUpdates: false)
+        captureView.drawHierarchy(in: captureView.bounds, afterScreenUpdates: false)
         
         let image = UIGraphicsGetImageFromCurrentImageContext();
         
         var fileExtension = "png"
         var data : NSData?
         if (outputJPG) {
-            data = UIImageJPEGRepresentation(image, 1)
+            data = image!.jpegData(compressionQuality: 1) as NSData?
             fileExtension = "jpg"
         }
         else {
-            data = UIImagePNGRepresentation(image)
+            data = image!.pngData() as NSData?
         }
         
         var path = outputPathString()
-        path = path.stringByAppendingPathComponent("/\(name)-\(imageCounter).\(fileExtension)")
+        path = path.appendingPathComponent("/\(name)-\(imageCounter).\(fileExtension)") as NSString
         
         imageCounter = imageCounter + 1
         
         if let imageRaw = data {
-            imageRaw.writeToURL(NSURL(string: path)!, atomically: false)
+            imageRaw.write(to: NSURL(string: path as String)! as URL, atomically: false)
         }
         
         UIGraphicsEndImageContext();
